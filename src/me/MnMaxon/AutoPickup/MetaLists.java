@@ -7,6 +7,7 @@ public class MetaLists {
 	public static MetaLists off = new MetaLists("off");
 	public static MetaLists cooldown = new MetaLists("cooldown");
 	public static MetaLists who = new MetaLists("WHO");
+	public static MetaLists guess = new MetaLists("Guess");
 
 	private String name;
 

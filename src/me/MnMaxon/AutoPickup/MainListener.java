@@ -1,7 +1,6 @@
 package me.MnMaxon.AutoPickup;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -27,11 +26,7 @@ public class MainListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBreak(BlockBreakEvent e) {
 		Player p = e.getPlayer();
-		Main.guess.remove(p.getName());
-		List<Material> guessDrops = new ArrayList<Material>();
-		for (ItemStack guessMat : e.getBlock().getDrops(p.getItemInHand()))
-			guessDrops.add(guessMat.getType());
-		Main.guess.put(p.getName(), guessDrops);
+		Guess.add(p, e.getBlock().getDrops(p.getItemInHand()));
 		boolean isNatural = Natural.isNatural(e.getBlock());
 		Natural.naturalize(e.getBlock());
 		if (p.hasPermission(Permissions.INFINITE_PICK) && p.getItemInHand().getType().name().contains("PICK"))
@@ -89,42 +84,19 @@ public class MainListener implements Listener {
 		if (MetaLists.who.contains(e.getEntity())
 				&& (Bukkit.getPlayer((String) MetaLists.who.get(e.getEntity()))) != null)
 			p = Bukkit.getPlayer((String) MetaLists.who.get(e.getEntity()));
-		if (p == null) {
-			p = getNearby(e.getEntity(), .5);
-			if (p == null) {
-				p = getNearby(e.getEntity(), 1);
-				if (p == null) {
-					p = getNearby(e.getEntity(), 2);
-					if (p == null) {
-						p = getNearby(e.getEntity(), 3);
-						if (p == null) {
-							p = getNearby(e.getEntity(), 4);
-							if (p == null) {
-								p = getNearby(e.getEntity(), 5);
-								if (p == null) {
-									p = getNearby(e.getEntity(), 6);
-									if (p == null) {
-										return;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+		int maxBlocks = 8;
 
-			if (!Main.guess.containsKey(p.getName())
-					|| !Main.guess.get(p.getName()).contains(e.getEntity().getItemStack().getType())) {
-				for (Entity ent : e.getEntity().getNearbyEntities(6, 6, 6))
-					if (ent instanceof Player
-							&& ent.isValid()
-							&& Main.guess.containsKey(((Player) ent).getName())
-							&& Main.guess.get(((Player) ent).getName())
-									.contains(e.getEntity().getItemStack().getType()))
-						p = (Player) ent;
-			}
+		ArrayList<Player> guessPlayers = new ArrayList<Player>();
+		for (Entity ent : e.getEntity().getNearbyEntities(8, 8, 8))
+			if (ent instanceof Player && Guess.fits((Player) ent, e.getEntity().getItemStack().getType()))
+				guessPlayers.add((Player) ent);
+		for (int i = 0; p == null && i < maxBlocks; i++) {
+			Player testPlayer = getNearby(e.getEntity(), i);
+			if (guessPlayers.isEmpty() || guessPlayers.contains(testPlayer))
+				p = testPlayer;
 		}
-		Main.guess.remove(p.getName());
+		if (p == null)
+			return;
 
 		ArrayList<ItemStack> finalItems = new ArrayList<ItemStack>();
 		finalItems.add(e.getEntity().getItemStack());

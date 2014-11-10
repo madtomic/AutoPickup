@@ -2,7 +2,6 @@ package me.MnMaxon.AutoPickup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -30,7 +29,6 @@ public final class Main extends JavaPlugin {
 
 	public static Map<Material, AutoBlockInfo> blocksToAuto = new HashMap<Material, AutoBlockInfo>();
 	public static Map<Material, AutoBlockInfo> blocksToSmelt = new HashMap<Material, AutoBlockInfo>();
-	public static Map<String, List<Material>> guess = new HashMap<String, List<Material>>();
 
 	public static boolean fullDrop = false;
 	public static boolean superFortune = false;
