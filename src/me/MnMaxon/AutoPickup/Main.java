@@ -26,6 +26,7 @@ public final class Main extends JavaPlugin {
 	public static SuperYaml PermissionConfig;
 	public static SuperYaml WhiteListConfig;
 	public static SuperYaml DataConfig;
+	public static SuperYaml AutoSmeltConfig;
 
 	public static Map<Material, AutoBlockInfo> blocksToAuto = new HashMap<Material, AutoBlockInfo>();
 	public static Map<Material, AutoBlockInfo> blocksToSmelt = new HashMap<Material, AutoBlockInfo>();
@@ -38,7 +39,6 @@ public final class Main extends JavaPlugin {
 		plugin = this;
 		dataFolder = this.getDataFolder().getAbsolutePath();
 		reloadConfigs();
-		setUpSmeltBlocks();
 		setUpAutoBlocks();
 		getServer().getPluginManager().registerEvents(new MainListener(), this);
 	}
@@ -60,11 +60,35 @@ public final class Main extends JavaPlugin {
 		blocksToAuto.put(Material.COAL, new AutoBlockInfo(9, Material.COAL_BLOCK, 1));
 	}
 
-	private void setUpSmeltBlocks() {
-		blocksToSmelt.put(Material.DIAMOND_ORE, new AutoBlockInfo(9, Material.DIAMOND, 1));
-		blocksToSmelt.put(Material.EMERALD_ORE, new AutoBlockInfo(9, Material.EMERALD, 1));
-		blocksToSmelt.put(Material.GOLD_ORE, new AutoBlockInfo(9, Material.GOLD_INGOT, 1));
-		blocksToSmelt.put(Material.IRON_ORE, new AutoBlockInfo(9, Material.IRON_INGOT, 1));
+	@SuppressWarnings("deprecation")
+	private static void setUpSmeltBlocks() {
+		AutoSmeltConfig = new SuperYaml(dataFolder + "/AutoSmelt.yml");
+		if (AutoSmeltConfig.get("Smelt") == null) {
+			AutoSmeltConfig.set("Smelt." + Material.DIAMOND_ORE.name(), Material.DIAMOND.name());
+			AutoSmeltConfig.set("Smelt." + Material.EMERALD_ORE.name(), Material.EMERALD.name());
+			AutoSmeltConfig.set("Smelt." + Material.GOLD_ORE.name(), Material.GOLD_INGOT.name());
+			AutoSmeltConfig.set("Smelt." + Material.IRON_ORE.getId() + "", Material.IRON_INGOT.getId());
+			AutoSmeltConfig.save();
+		}
+		for (String key : AutoSmeltConfig.config.getConfigurationSection("Smelt").getKeys(false)) {
+			Material ore = null;
+			Material ingot = null;
+			try {
+				ore = Material.getMaterial(Integer.parseInt(key));
+			} catch (NumberFormatException ex) {
+				ore = Material.matchMaterial(key.replace(" ", "_").toUpperCase());
+			}
+			if (AutoSmeltConfig.get("Smelt." + key) instanceof Integer) {
+				ingot = Material.getMaterial(AutoSmeltConfig.getInt("Smelt." + key));
+			} else if (AutoSmeltConfig.get("Smelt." + key) instanceof String) {
+				ingot = Material.matchMaterial(AutoSmeltConfig.getString("Smelt." + key).replace(" ", "_")
+						.toUpperCase());
+			}
+			if (ingot == null || ore == null)
+				Bukkit.getLogger().severe("[LonksKits] Error in AutoSmelt.yml at Smelt." + key);
+			else
+				blocksToSmelt.put(ore, new AutoBlockInfo(9, ingot, 1));
+		}
 	}
 
 	public static void reloadConfigs() {
@@ -74,6 +98,7 @@ public final class Main extends JavaPlugin {
 		Messages.setUp();
 		Natural.setUp();
 		Permissions.setUp();
+		setUpSmeltBlocks();
 		if (MainConfig.get("AutoBlock") != null)
 			MainConfig.set("AutoBlock", null);
 		if (MainConfig.get("AutoSmelt") != null)

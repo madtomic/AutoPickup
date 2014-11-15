@@ -154,19 +154,21 @@ public class MainListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onEntityDeath(EntityDeathEvent e) {
 		Player killer = e.getEntity().getKiller();
-		if (killer != null && !Check.hasAutoPickupMob(killer)) {
+
+		// If there is a player, and he doesn't want to have mob autopickup
+		// Or The thing killed is a person
+		// Then NoPickup will happen
+		if ((killer != null && !Check.hasAutoPickupMob(killer)) || e.getEntity() instanceof Player) {
 			for (ItemStack is : e.getDrops())
 				NoPickup.add(is);
 			return;
 		}
+
 		ArrayList<ItemStack> drops = new ArrayList<ItemStack>(e.getDrops());
 		e.getDrops().clear();
-		if (e.getEntity() instanceof Player)
-			for (ItemStack is : drops) {
-				is = (NoPickup.add(is));
-				e.getEntity().getWorld().dropItemNaturally(e.getEntity().getLocation(), is);
-			}
-		else if (killer != null && killer.isValid()) {
+
+		// A player killed it
+		if (killer != null && killer.isValid()) {
 			for (ItemStack is : drops)
 				killer.getWorld().dropItemNaturally(killer.getLocation(), is);
 		}
