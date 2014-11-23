@@ -177,6 +177,11 @@ public final class Main extends JavaPlugin {
 		return false;
 	}
 
+	public static ArrayList<ItemStack> addToInventory(Player p, ItemStack is) {
+		HashMap<Integer, ItemStack> leftOver = p.getInventory().addItem(is);
+		return new ArrayList<>(leftOver.values());
+	}
+
 	public static ArrayList<ItemStack> addToInventory(Player p, ArrayList<ItemStack> finalItems) {
 		ArrayList<ItemStack> remaining = new ArrayList<ItemStack>();
 		for (ItemStack is : finalItems) {
