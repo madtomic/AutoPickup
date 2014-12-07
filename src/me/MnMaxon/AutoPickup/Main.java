@@ -52,6 +52,7 @@ public final class Main extends JavaPlugin {
 		blocksToAuto.put(Material.DIAMOND, new AutoBlockInfo(9, Material.DIAMOND_BLOCK, 1));
 		blocksToAuto.put(Material.EMERALD, new AutoBlockInfo(9, Material.EMERALD_BLOCK, 1));
 		blocksToAuto.put(Material.GOLD_INGOT, new AutoBlockInfo(9, Material.GOLD_BLOCK, 1));
+		blocksToAuto.put(Material.GLOWSTONE_DUST, new AutoBlockInfo(4, Material.GLOWSTONE, 1));
 		blocksToAuto.put(Material.GOLD_NUGGET, new AutoBlockInfo(9, Material.GOLD_INGOT, 1));
 		blocksToAuto.put(Material.IRON_INGOT, new AutoBlockInfo(9, Material.IRON_BLOCK, 1));
 		blocksToAuto.put(Material.INK_SACK, new AutoBlockInfo(9, Material.LAPIS_BLOCK, 1));
@@ -200,7 +201,8 @@ public final class Main extends JavaPlugin {
 			ItemStack is = startingItems[i];
 			if (is == null)
 				;// DO NOTHING
-			else if (!Main.blocksToAuto.containsKey(is.getType())) {
+			else if (!Main.blocksToAuto.containsKey(is.getType())
+					|| (is.getType().equals(Material.INK_SACK) && is.getDurability() != 4)) {
 				finalItems[i] = is;
 			} else {
 				ArrayList<Integer> intList = new ArrayList<Integer>();
@@ -271,6 +273,8 @@ public final class Main extends JavaPlugin {
 				Inventory tempInv = Bukkit.createInventory(null, InventoryType.PLAYER);
 				tempInv.setContents(finalItems);
 				for (ItemStack is : toAdd) {
+					if (is.getType().equals(Material.INK_SACK))
+						is.setDurability((short) 4);
 					tempInv.addItem(is);
 				}
 				finalItems = tempInv.getContents();

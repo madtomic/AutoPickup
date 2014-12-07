@@ -2,6 +2,7 @@ package me.MnMaxon.AutoPickup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Item;
@@ -52,6 +53,7 @@ public class SuperLoc {
 		item.remove();
 	}
 
+	@SuppressWarnings("deprecation")
 	private void autoPickup(Item item) {
 		if (!p.isOnline() || !p.isValid() || !Check.hasAutoPickup(p))
 			return;
@@ -67,6 +69,15 @@ public class SuperLoc {
 					item.getWorld().dropItemNaturally(item.getLocation(), is);
 				}
 		}
+
+		if (p.hasPermission(Permissions.AUTO_BLOCK)) {
+			ItemStack[] newInvCont = Main.convertToBlocks(p.getInventory().getContents());
+			if (!p.getInventory().getContents().equals(newInvCont)) {
+				p.getInventory().setContents(newInvCont);
+				p.updateInventory();
+			}
+		}
+	
 	}
 
 	private void smelt(Item item) {

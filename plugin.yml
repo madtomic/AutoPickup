@@ -1,5 +1,5 @@
 name: Auto_Pickup
-version: 2.5
+version: 2.6
 main: me.MnMaxon.AutoPickup.Main
 commands:
   AutoPickup:

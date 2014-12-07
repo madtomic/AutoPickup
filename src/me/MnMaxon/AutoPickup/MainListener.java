@@ -15,7 +15,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
-import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -35,7 +34,9 @@ public class MainListener implements Listener {
 						.equals(Material.GOLD_ORE)) || Main.superFortune)
 				&& !p.getGameMode().equals(GameMode.CREATIVE)
 				&& p.getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)
-				&& WhiteList.getBlocks(p.getItemInHand()).contains(e.getBlock().getType()) && isNatural) {
+				&& WhiteList.getBlocks(p.getItemInHand()).contains(e.getBlock().getType())
+				&& (e.getBlock().getType().equals(Material.IRON_ORE)
+						|| e.getBlock().getType().equals(Material.GOLD_ORE) || isNatural)) {
 			int i = p.getItemInHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
 			if (p.getItemInHand().getDurability() - 1 <= 0)
 				p.getItemInHand().setType(Material.AIR);
@@ -44,8 +45,8 @@ public class MainListener implements Listener {
 			for (ItemStack is : e.getBlock().getDrops(e.getPlayer().getItemInHand())) {
 				if (is.getAmount() == 1) {
 					is.setAmount(new Random().nextInt(i));
-					Location loc = e.getBlock().getLocation().add(.5, .5, .5);
-					MetaLists.who.add(loc.getWorld().dropItemNaturally(loc, is), p);
+					Location loc = e.getBlock().getLocation().add(.5, .1, .5);
+					MetaLists.who.add(loc.getWorld().dropItem(loc, is), p);
 				}
 			}
 		}
@@ -65,21 +66,6 @@ public class MainListener implements Listener {
 					e.getBlock().getLocation().getWorld()
 							.dropItemNaturally(e.getBlock().getLocation().add(.5, .5, .1), is);
 				}
-		}
-	}
-
-	@SuppressWarnings("deprecation")
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onInv(InventoryPickupItemEvent e) {
-		if (e.getInventory().getHolder() == null || e.getInventory().getHolder() instanceof Player)
-			return;
-		Player p = (Player) e.getInventory().getHolder();
-		if (p.hasPermission(Permissions.AUTO_BLOCK)) {
-			ItemStack[] newInvCont = Main.convertToBlocks(p.getInventory().getContents());
-			if (!p.getInventory().getContents().equals(newInvCont)) {
-				p.getInventory().setContents(newInvCont);
-				p.updateInventory();
-			}
 		}
 	}
 
