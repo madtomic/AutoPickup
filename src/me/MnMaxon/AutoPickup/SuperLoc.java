@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -77,11 +78,12 @@ public class SuperLoc {
 				p.updateInventory();
 			}
 		}
-	
+
 	}
 
 	private void smelt(Item item) {
-		if (p.hasPermission(Permissions.AUTO_SMELT)) {
+		if ((p.getItemInHand() == null || !p.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH))
+				&& p.hasPermission(Permissions.AUTO_SMELT)) {
 			ItemStack is = item.getItemStack();
 			if (Main.blocksToSmelt.containsKey(is.getType())) {
 				is.setType(Main.blocksToSmelt.get(is.getType()).getNewType());

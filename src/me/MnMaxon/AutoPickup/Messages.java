@@ -43,7 +43,10 @@ public class Messages {
 			Main.MessageConfig.set(path, value);
 			return value;
 		}
-		return Main.MessageConfig.get(path);
+		Object object = Main.MessageConfig.get(path);
+		if (object instanceof String)
+			return Main.addColor((String) object);
+		return object;
 	}
 
 	public static void send(Player p, String message) {

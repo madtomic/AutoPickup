@@ -303,4 +303,26 @@ public final class Main extends JavaPlugin {
 	public static void toggle(Player p) {
 		toggle(p, (MetaLists.off.contains(p)) ? true : false);
 	}
+
+	public static String addColor(String string) {
+		if (string == null)
+			return null;
+		return string.replace("§", "&").replace("&0", "" + ChatColor.BLACK).replace("&1", "" + ChatColor.DARK_BLUE)
+				.replace("&2", "" + ChatColor.DARK_GREEN).replace("&3", "" + ChatColor.DARK_AQUA)
+				.replace("&4", "" + ChatColor.DARK_RED).replace("&5", "" + ChatColor.DARK_PURPLE)
+				.replace("&6", "" + ChatColor.GOLD).replace("&7", "" + ChatColor.GRAY)
+				.replace("&8", "" + ChatColor.DARK_GRAY).replace("&9", "" + ChatColor.BLUE)
+				.replace("&A", "" + ChatColor.GREEN).replace("&B", "" + ChatColor.AQUA)
+				.replace("&C", "" + ChatColor.RED).replace("&D", "" + ChatColor.LIGHT_PURPLE)
+				.replace("&E", "" + ChatColor.YELLOW).replace("&F", "" + ChatColor.WHITE)
+				.replace("&M", "" + ChatColor.STRIKETHROUGH).replace("&N", "" + ChatColor.UNDERLINE)
+				.replace("&L", "" + ChatColor.BOLD).replace("&K", "" + ChatColor.MAGIC)
+				.replace("&O", "" + ChatColor.ITALIC).replace("&a", "" + ChatColor.GREEN)
+				.replace("&b", "" + ChatColor.AQUA).replace("&c", "" + ChatColor.RED)
+				.replace("&d", "" + ChatColor.LIGHT_PURPLE).replace("&e", "" + ChatColor.YELLOW)
+				.replace("&f", "" + ChatColor.WHITE).replace("&m", "" + ChatColor.STRIKETHROUGH)
+				.replace("&n", "" + ChatColor.UNDERLINE).replace("&l", "" + ChatColor.BOLD)
+				.replace("&k", "" + ChatColor.MAGIC).replace("&o", "" + ChatColor.ITALIC)
+				+ ChatColor.RESET;
+	}
 }
